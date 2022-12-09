@@ -1,11 +1,15 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
+// import dbConnect from '~/db/db.server';
+import { getPosts } from '~/models/user.server';
 
 import type { IUser } from '~/models/user.server';
-import User from '~/models/user.server';
+// import User from '~/models/user.server';
 // import User from '~/models/user.server';
 
-invariant(process.env.SESSION_SECRET, 'SESSION_SECRETE must be set');
+// dbConnect();
+
+invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set');
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -35,15 +39,25 @@ export async function getUserId(
 }
 
 export async function getUser(request: Request) {
-  const userId = await getUserId(request);
+  // const userId = await getUserId(request);
 
-  if (userId === undefined) return null;
+  // if (userId === undefined) return null;
 
-  const user = await User.getUserById(userId);
+  // console.log(userId);
 
-  if (user) return user;
+  // console.log(User);
 
-  throw await logout(request);
+  try {
+    const user = getPosts();
+    // const user = await User?.findById('243sdfsd23');
+    // console.log(user);
+  } catch (error) {
+    console.log(error);
+  }
+
+  // if (user) return user;
+
+  // throw await logout(request);
 }
 
 export async function requireUserId(
@@ -63,9 +77,9 @@ export async function requireUserId(
 export async function requireUser(request: Request) {
   const userId = await requireUserId(request);
 
-  const user = await User.getUserById(userId);
+  // const user = await User.getUserById(userId);
 
-  if (user) return user;
+  // if (user) return user;
 
   throw await logout(request);
 }
