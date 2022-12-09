@@ -1,17 +1,17 @@
 /* eslint-disable no-useless-escape */
-import { Schema, models, model, isValidObjectId } from 'mongoose';
+import { Document, Schema, models, model, isValidObjectId } from 'mongoose';
 import isEmail from 'validator/lib/isEmail';
 // import isStrongPassword from 'validator/lib/isStrongPassword';
 import { compare, genSalt, hash } from 'bcrypt';
 import { createRefreshToken } from '../utils/createRefreshToken';
 
-export type IUser = {
+export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
   avatar?: string;
   refresh_token?: string[];
-};
+}
 
 interface ISignup {
   username: string;
