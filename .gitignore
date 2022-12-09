@@ -11,5 +11,5 @@ node_modules
 /api/index.js.map
 
 pnpm-lock.yaml
-
+package-lock.json
 yarn.lock

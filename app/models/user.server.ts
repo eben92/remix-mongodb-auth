@@ -32,7 +32,7 @@ const userSchema = new Schema<IUser>(
 
 // methods
 
-// -- sign up method
+// -- sign up method --
 userSchema.statics.signup = async function (params: ISignup) {
   const { email, password, username } = params;
 
@@ -82,3 +82,7 @@ userSchema.statics.signup = async function (params: ISignup) {
 
   return currentUserDataWithoutPassword;
 };
+
+const User: any = (module.exports = models.User || model('User', userSchema));
+
+export default User;
