@@ -3,17 +3,23 @@ import { Schema, models, model, isValidObjectId } from 'mongoose';
 import isEmail from 'validator/lib/isEmail';
 // import isStrongPassword from 'validator/lib/isStrongPassword';
 import { compare, genSalt, hash } from 'bcrypt';
+import { createRefreshToken } from '../utils/createRefreshToken';
 
 interface IUser {
   username: string;
   email: string;
   password: string;
   avatar?: string;
+  refresh_token?: string[];
 }
 
 interface ISignup {
   username: string;
   email: string;
+  password: string;
+}
+interface ISignin {
+  username: string;
   password: string;
 }
 
@@ -23,7 +29,8 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String, required: true },
-    avatar: { type: String }
+    avatar: { type: String, default: '' },
+    refresh_token: { type: Array, default: [] }
   },
   {
     timestamps: true
@@ -77,12 +84,46 @@ userSchema.statics.signup = async function (params: ISignup) {
 
   // automatically use this data to set user session / login the new user
   const currentUserDataWithoutPassword = await this.findOne({ email }).select(
-    '-password -__v'
+    '-password -__v -refresh_token'
   );
 
   return currentUserDataWithoutPassword;
 };
 
+// -- sign in method --
+userSchema.statics.signin = async function (params: ISignin) {
+  const { password, username } = params;
+
+  if (!username || !password) {
+    throw Error('Missing username or password');
+  }
+
+  // users will signin using either username/email
+  const user = await this.findOne({
+    $or: [{ username }, { email: username }]
+  });
+
+  if (!user) {
+    throw Error('Incorrect email or username');
+  }
+
+  const passwordMatch = await compare(password, user.password);
+
+  // incorrect password
+  if (!passwordMatch) throw Error('Incorrect password');
+
+  // correct password
+  const userDataWithoutPassword = await this.findOne({
+    $or: [{ username }, { email: username }]
+  }).select('-password -__v -refresh_token');
+
+  return userDataWithoutPassword;
+};
+
 const User: any = (module.exports = models.User || model('User', userSchema));
 
 export default User;
+
+// 149
+// 148
+// 147
