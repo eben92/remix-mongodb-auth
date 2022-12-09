@@ -5,13 +5,13 @@ import isEmail from 'validator/lib/isEmail';
 import { compare, genSalt, hash } from 'bcrypt';
 import { createRefreshToken } from '../utils/createRefreshToken';
 
-interface IUser {
+export type IUser = {
   username: string;
   email: string;
   password: string;
   avatar?: string;
   refresh_token?: string[];
-}
+};
 
 interface ISignup {
   username: string;
