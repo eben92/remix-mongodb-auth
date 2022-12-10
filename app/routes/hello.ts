@@ -1,5 +1,6 @@
-import { json, LoaderArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import type { ActionArgs } from '@remix-run/node';
+import { getStoredCrons, storeCron } from '~/cron';
 export async function loader() {
   return json(
     {
@@ -12,32 +13,24 @@ export async function loader() {
 export async function action({ request }: ActionArgs) {
   const { method } = request;
   // const { name }: any = body?.getReader();
-  const name = async () => {
-    try {
-      const { name } = await request.json();
-
-      console.log(name);
-      return name;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
-  const newnn = await name();
-
-  if (!newnn) {
-    return json({ msg: 'invalid request' }, { status: 400 });
-  }
-  console.log(newnn, 'name');
 
   switch (method) {
     case 'POST':
-      // const
+      const cronData = {
+        title: 'test - ' + new Date().getDay(),
+        id: ''
+      };
+
+      const existingNotes = await getStoredCrons();
+      cronData.id = new Date().toISOString();
+
+      const updatedCron = existingNotes.concat(cronData);
+
+      await storeCron(updatedCron);
 
       return json(
         {
-          msg: 'Post request',
-          result: newnn
+          msg: 'Success'
         },
         { status: 200 }
       );
