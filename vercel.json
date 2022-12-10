@@ -1,7 +1,7 @@
 {
   "functions": {
-    "api/**": {
-      "maxDuration": 30
+    "api/index.js": {
+      "includeFiles": "files/cron.json"
     }
   }
 }
