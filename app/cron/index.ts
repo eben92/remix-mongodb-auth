@@ -41,6 +41,14 @@ const file = path.join(process.cwd(), './files/cron.json');
 
 export async function getStoredCrons() {
   console.log(process.cwd(), 'my dirr');
+
+  try {
+    const files = await fs.readdir(process.cwd());
+    for (const file1 of files) console.log(file1, 'filess');
+  } catch (err) {
+    console.error(err);
+  }
+
   const rawFileContent = await fs.readFile(file, { encoding: 'utf-8' });
   const data = JSON.parse(rawFileContent);
 
