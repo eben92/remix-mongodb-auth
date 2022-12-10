@@ -15,6 +15,16 @@ model User {
   id          String       @id @map("_id") @default(auto()) @db.ObjectId
   email       String    @unique
   password    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  username    String   @unique
+  profile     Profile
+
+
+}
+
+
+type Profile {
+  firstname String   
+  lastname String   
 }
