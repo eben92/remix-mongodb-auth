@@ -38,6 +38,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 const file = path.join(process.cwd(), './files/cron.json');
+const vc = path.join(process.cwd(), './___vc');
+const apis = path.join(process.cwd(), './api');
 
 export async function getStoredCrons() {
   console.log(process.cwd(), 'my dirr');
@@ -45,6 +47,12 @@ export async function getStoredCrons() {
   try {
     const files = await fs.readdir(process.cwd());
     for (const file1 of files) console.log(file1, 'filess');
+
+    const api = await fs.readdir(apis);
+    for (const file2 of api) console.log(file2, 'apiii');
+
+    const vcc = await fs.readdir(vc);
+    for (const file3 of vcc) console.log(file3, 'vcccc');
   } catch (err) {
     console.error(err);
   }
