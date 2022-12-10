@@ -1,13 +1,6 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
-// import dbConnect from '~/db/db.server';
-// import { getPosts } from '~/models/user.server';
-
-// import type { IUser } from '~/models/user.server';
-// import User from '~/models/user.server';
-// import User from '~/models/user.server';
-
-// dbConnect();
+import type { User } from '~/utils/auth.server';
 
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set');
 
@@ -29,41 +22,33 @@ export async function getSession(request: Request) {
   return sessionStorage.getSession(cookie);
 }
 
-// export async function getUserId(
-//   request: Request
-// ): Promise<IUser['_id'] | undefined> {
-//   const session = await getSession(request);
-//   const userId = session.get(USER_SESSION_KEY);
+export async function getUserId(
+  request: Request
+): Promise<User['id'] | undefined> {
+  const session = await getSession(request);
+  const userId = session.get(USER_SESSION_KEY);
 
-//   return userId;
-// }
+  return userId;
+}
 
 export async function getUser(request: Request) {
-  // const userId = await getUserId(request);
-  // if (userId === undefined) return null;
-  // console.log(userId);
-  // console.log(User);
-  // try {
-  //   const user = getPosts();
-  //   // const user = await User?.findById('243sdfsd23');
-  //   // console.log(user);
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  const userId = await getUserId(request);
+  if (userId === undefined) return null;
+
   // if (user) return user;
-  // throw await logout(request);
+  throw await logout(request);
 }
 
 export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) {
-  // const userId = await getUserId(request);
-  // if (!userId) {
-  //   const searchParams = new URLSearchParams([['redirectTo', redirectTo]]);
-  //   throw redirect(`/login?${searchParams}`);
-  // }
-  // return userId;
+  const userId = await getUserId(request);
+  if (!userId) {
+    const searchParams = new URLSearchParams([['redirectTo', redirectTo]]);
+    throw redirect(`/login?${searchParams}`);
+  }
+  return userId;
 }
 
 export async function requireUser(request: Request) {

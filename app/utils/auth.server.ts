@@ -1,13 +1,17 @@
+import { createUserSession } from '~/session/session.server';
 import { json } from '@remix-run/node';
 import { prisma } from './prisma.server';
 import type { RegisterForm, LoginForm } from './types.server';
 import { createUser } from './user.server';
 import bcrypt from 'bcrypt';
+export type { User } from '@prisma/client';
 
-export const register = async (form: RegisterForm) => {
+export const register = async (request: Request, form: RegisterForm) => {
   const exists = await prisma.user.count({
-    where: { email: form.email }
+    where: { OR: [{ email: form.email }, { username: form.username }] }
   });
+
+  console.log(exists);
 
   if (exists) {
     return json(
@@ -36,11 +40,16 @@ export const register = async (form: RegisterForm) => {
     );
   }
 
-  return null;
+  return createUserSession({
+    request,
+    redirectTo: '/',
+    userId: newUser.id,
+    remember: true
+  });
 };
 
 // login method
-export const login = async (form: LoginForm) => {
+export const login = async (request: Request, form: LoginForm) => {
   const user = await prisma.user.findFirst({
     where: { OR: [{ email: form.username }, { username: form.username }] }
   });
@@ -54,5 +63,10 @@ export const login = async (form: LoginForm) => {
     );
   }
 
-  return null;
+  return createUserSession({
+    request,
+    redirectTo: '/',
+    userId: user.id,
+    remember: true
+  });
 };
