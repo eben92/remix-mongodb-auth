@@ -40,6 +40,7 @@ import path from 'path';
 const file = path.join(process.cwd(), './files/cron.json');
 
 export async function getStoredCrons() {
+  console.log(process.cwd(), 'my dirr');
   const rawFileContent = await fs.readFile(file, { encoding: 'utf-8' });
   const data = JSON.parse(rawFileContent);
 
